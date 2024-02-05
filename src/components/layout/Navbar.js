@@ -19,8 +19,8 @@ const Navbar = () =>{
      Home</Link>
      </li>
      <li>
-     <Link to='/products' className={(isActive) => isActive ? classes.active : undefined} >
-     Products</Link>
+     <Link to='/exp' className={(isActive) => isActive ? classes.active : undefined} >
+     Expense</Link>
      </li>
      <li>
      <Link to='/about' className={(isActive) => isActive ? classes.active : undefined} >

@@ -3,8 +3,10 @@ import "./App.css";
 import Navbar from "./components/layout/Navbar";
 import HomePage from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
-import Products from "./pages/Products";
+import Expense from "./pages/Expense";
 import AuthPage from "./components/Authentication/Auth";
+import Profile from "./components/profile/Profile";
+import CompleteProfile from "./components/profile/CompleteProfile";
 function App() {
   return (
     <>
@@ -12,9 +14,11 @@ function App() {
       <Routes>
       
       <Route path="/home" element={<HomePage />} />
-      <Route path="/products" element={<Products />} />
+      <Route path="/exp" element={<Expense />} />
       <Route path="/about" element={<AboutPage />} />
+      <Route path="/profile" element={<Profile />} />
       <Route path="/" element={<AuthPage />} />
+      <Route path="/profileform" element={<CompleteProfile />} />
       </Routes>
     </>
   );

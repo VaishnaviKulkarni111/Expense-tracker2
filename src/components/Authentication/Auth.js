@@ -90,7 +90,7 @@ const AuthPage = () => {
       })
       .then((data) => {
         authCtx.login(data.idToken);
-        navigate("/products");
+        navigate("/exp");
       })
       .catch((err) => {
         alert(err.message);
