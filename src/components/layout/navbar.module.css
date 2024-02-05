@@ -1,0 +1,77 @@
+.header {
+    height: 5rem;
+    background-color: #000000;
+    padding: 0 10%;
+
+  }
+  
+  .header nav {
+    height: 100%;
+  }
+  
+  .header ul {
+    height: 100%;
+    list-style: none;
+    display: flex;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .header li {
+    margin: 0 1rem;
+    width: 5rem;
+  }
+  
+  .header a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  .header a:hover,
+.header a:active,
+.header a.active {
+  color: #95bcf0;
+  padding-bottom: 0.25rem;
+  border-bottom: 4px solid #95bcf0;
+}
+
+.brand {
+  background: gray;
+  padding: 30px;
+    font-size: 100px;
+    color: white;
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+.cart{
+  background: black;
+  border: 2px solid #56CCF2;
+    border-radius: 7px;
+    padding: 3px 5px;
+    position: absolute;
+    right: 3%;
+    text-align: center;
+   
+}
+
+.btn{
+  background: black;
+  color: white;
+  border: none;
+ 
+}
+.badge {
+  background-color: #296fcc;
+  padding: 0.25rem 0.7rem;
+  border-radius: 50px;
+  margin-left: 1rem;
+  font-weight: bold;
+  position: absolute;
+  bottom: 50%;
+  right: -20%;
+}
