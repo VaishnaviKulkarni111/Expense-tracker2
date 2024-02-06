@@ -74,9 +74,30 @@ const CompleteProfile =() =>{
     }catch(err){
      console.log(err)
     }
-   
-    
-}
+    }
+
+   const verifyEmail =async()=>{
+    const url= 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyD4V11PNolpKhtXgURPq9zel2py2kUt5Sw';
+    try{
+    const res = await fetch(url,{
+        method: "POST",
+        body: JSON.stringify({
+        requestType:"VERIFY_EMAIL",
+        idToken
+        }),
+        headers: { "Content-type": "application/json" },   
+    })
+    const data = await res.json();
+
+     if (res.ok) {
+       console.log('Verification email sent successfully', data);
+     } else {
+       console.error('Error sendinf email', data);
+     }
+    }catch(err){
+    console.log(err)
+    }
+   }
 
     return(<>
     <h2>Contact Details</h2>
@@ -87,6 +108,7 @@ const CompleteProfile =() =>{
      <input type="text" value={photo} onChange={e => setPhoto(e.target.value)} ref={photoRef}/>
      <button type="submit">Update</button>
     </form>
+    <button onClick={verifyEmail}> Verify email</button>
 
     </> )
 }
