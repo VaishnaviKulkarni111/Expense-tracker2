@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import classes from './navbar.module.css'
 import AuthContext from '../../store/auth-context';
 import { useContext } from 'react';
@@ -6,9 +6,10 @@ import { useContext } from 'react';
 const Navbar = () =>{
     const authCtx = useContext(AuthContext);
     const isLoggedIn = authCtx.isLoggedIn;
-
+    const navigate = useNavigate()
     const logouHandler = () =>{
       authCtx.logout();
+      navigate('/')
     }
   return(<>
   <header className={classes.header}>

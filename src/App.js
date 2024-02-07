@@ -3,7 +3,7 @@ import "./App.css";
 import Navbar from "./components/layout/Navbar";
 import HomePage from "./pages/Home";
 import AboutPage from "./pages/AboutPage";
-import Expense from "./pages/Expense";
+import Expense from "./components/expense/Expense";
 import AuthPage from "./components/Authentication/Auth";
 import Profile from "./components/profile/Profile";
 import CompleteProfile from "./components/profile/CompleteProfile";
