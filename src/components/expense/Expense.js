@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import classes from './expense.module.css'
 import { useContext, useRef, useState } from "react";
-
+import axios from "axios";
 const Expense =() =>{
  const navigate = useNavigate();
  const [expenses, setExpenses] = useState([]);
@@ -26,7 +26,7 @@ const Expense =() =>{
       }),
       headers: { "Content-type": "application/json" },
     })
-    setExpenses(body)
+    setExpenses(expenses)
     console.log(res)
     console.log('expense added successfully')
    } catch(err){
@@ -51,6 +51,20 @@ const Expense =() =>{
     console.log(err)
   }
   }   
+  const deleteBtnHandler = async (expense) => {
+    try {
+      console.log("Deleting expense with ID:", expense.id);
+
+      await axios.delete(
+        `https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses/${expense.id}.json`
+      );
+
+      console.log("Successfully deleted expense");
+      fetchData();
+    } catch (error) {
+      console.log("Error deleting an item", error);
+    }
+  };
  const updateHandler = () =>{
     navigate('/profileform')
  }
@@ -93,7 +107,8 @@ const Expense =() =>{
           <span>{expense.amount}  </span>
           <span>{expense.desc}  </span>
           <span>{expense.category}  </span>
-          <span> <button> Delete</button></span>
+          <span> <button onClick={deleteBtnHandler(expense)}> Delete</button></span>
+          <span> <button> Edit</button></span>
         </li>
       ))}
     </div>
