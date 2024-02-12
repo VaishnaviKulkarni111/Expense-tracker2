@@ -16,7 +16,7 @@ const Navbar = () =>{
     <nav >
     <ul>
      <li>
-     <Link to='/home' className={(isActive) => isActive ? classes.active : undefined} >
+     <Link to='/home' className={isActive => isActive ? classes.active : undefined} >
      Home</Link>
      </li>
      <li>

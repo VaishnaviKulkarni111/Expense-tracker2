@@ -1,13 +1,14 @@
 import { useContext, useRef, useState } from "react";
+import {useDispatch}  from 'react-redux'
 import classes from "./Auth.module.css";
-import AuthContext from "../../store/auth-context";
+import { authActions } from "../../store/AuthSlice";
 import { useNavigate } from "react-router-dom";
 
 const AuthPage = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
-
-  const authCtx = useContext(AuthContext);
+ 
+  const dispatch = useDispatch()
   const navigate = useNavigate();
 
   const [isLogin, setIsLogin] = useState(true);
@@ -53,7 +54,7 @@ const AuthPage = () => {
     }
   };
 
-  const submitHandler = (e) => {
+  const submitHandler =async (e) => {
     e.preventDefault();
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
@@ -67,34 +68,30 @@ const AuthPage = () => {
       url =
         "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyD4V11PNolpKhtXgURPq9zel2py2kUt5Sw";
     }
-    fetch(url, {
-      method: "POST",
-      body: JSON.stringify({
-        email: enteredEmail,
-        password: enteredPassword,
-        returnSecureToken: true,
-      }),
-      headers: { "Content-type": "application/json" },
-    })
-      .then((res) => {
-        setIsLoading(false);
-        if (res.ok) {
-          return res.json();
-        } else {
-          return res.json().then((data) => {
-            let errorMsg = "Authentication Failed";
-            console.log(data);
-            throw new Error(errorMsg);
-          });
-        }
+    try{
+      const res = await fetch(url, {
+        method: "POST",
+        body: JSON.stringify({
+          email: enteredEmail,
+          password: enteredPassword,
+          returnSecureToken: true,
+        }),
+        headers: { "Content-type": "application/json" },
       })
-      .then((data) => {
-        authCtx.login(data.idToken);
-        navigate("/exp");
-      })
-      .catch((err) => {
+      const data = await res.json();
+          setIsLoading(false);
+          if (!res.ok) {
+            throw new Error(data.error?.message || "Authentication failed");
+          }
+        
+        dispatch(authActions.login({idToken: data.idToken, email: data.email}))
+        console.log(data.email);
+          navigate("/exp");
+
+       setIsLoading(false);
+    }catch(err){
         alert(err.message);
-      });
+      };
 
     emailRef.current.value = "";
     passwordRef.current.value = "";

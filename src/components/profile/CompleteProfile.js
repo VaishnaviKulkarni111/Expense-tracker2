@@ -1,5 +1,6 @@
 import { useContext, useEffect, useRef, useState } from "react"
 import AuthContext from "../../store/auth-context";
+import { useSelector } from "react-redux";
 
 const CompleteProfile =() =>{
     const [name, setName] = useState('');
@@ -10,10 +11,10 @@ const CompleteProfile =() =>{
     const nameRef = useRef();
     const photoRef = useRef();
     const authCtx = useContext(AuthContext) 
-    const idToken = authCtx.token
+    const idToken = useSelector((state) => state.auth.idToken)
     useEffect(() =>{
         saveData();
-    },[idToken])
+    },[])
     const ProfileData = {
         name: name,
         photo: photo,
@@ -33,7 +34,7 @@ const CompleteProfile =() =>{
         idToken,
         displayName: enteredName,
         photoUrl: enteredPhotoUrl ,
-        returnSecureToken :true,
+        
         }),
         headers: { "Content-type": "application/json" },
      })
@@ -57,7 +58,7 @@ const CompleteProfile =() =>{
     try{
     const res= await fetch(url,{
      method: "POST",   
-     idToken: authCtx.token,
+     idToken
      }) 
      if (!res.ok) {
         const data = await res.json();

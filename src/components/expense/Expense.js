@@ -1,11 +1,31 @@
 import { useNavigate } from "react-router-dom"
 import classes from './expense.module.css'
-import { useContext, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import axios from "axios";
+import { useDispatch, useSelector } from "react-redux";
 const Expense =() =>{
  const navigate = useNavigate();
  const [expenses, setExpenses] = useState([]);
+ const [editingItemId, setEditingItemId] = useState(null);
  const url ='https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses.json'
+ 
+ const list = expenses.map((expense) => (
+  <li key={expense.key} >
+    
+    <span>{expense.price}  </span>
+    <span>{expense.description}  </span>
+    <span>{expense.category}  </span>
+    <span> <button onClick={() => deleteBtnHandler(expense)}> Delete</button></span>
+    <span> <button onClick={() =>editHandler(expense.key,
+                    expense.description,
+                    expense.price,
+                    expense.category)}> Edit</button></span>
+  </li>
+))
+ const dispatch = useDispatch();
+ const isAuthenticated = useSelector(state=>state.auth.isAuthenticated)
+
+const myEmail = useSelector((state) => state.auth.email);
  const amountRef = useRef();
  const descRef = useRef();
  const categoryRef = useRef();
@@ -15,19 +35,30 @@ const Expense =() =>{
     const enteredPrice = amountRef.current.value;
     const enteredDesc = descRef.current.value;
     const enteredCategory = categoryRef.current.value;
- 
+    const obj= {
+      price: enteredPrice,
+      description: enteredDesc,
+      category: enteredCategory,
+    
+    }
+    console.log('obj', obj)
    try{
-    const res = await fetch(url, {
-      method: 'POST',
-      body: JSON.stringify({
+    if(editingItemId){
+      await axios.put( `https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses/${editingItemId}.json`,
+      {
         price: enteredPrice,
         description: enteredDesc,
         category: enteredCategory,
-      }),
+      })     
+    }else
+     await fetch(url, {
+      method: 'POST',
+      body: JSON.stringify(obj),
       headers: { "Content-type": "application/json" },
     })
-    setExpenses(expenses)
-    console.log(res)
+   
+    
+    console.log(expenses)
     console.log('expense added successfully')
    } catch(err){
     console.log(err, 'error adding expense')
@@ -37,26 +68,34 @@ const Expense =() =>{
 
   const fetchData = async () =>{
   try{
-    const response = await fetch(url,{
-      method: 'GET',
-    })
+    const response = await axios.get(url)
     
-    if (response.status !== 200) {
-      throw new Error("Failed to fetch expenses");
-    }
+
     const data = response.data;
+    console.log('data',data);
+    const entriesArray = Object.entries(data).map(([key, expense]) => ({
+      key, ...expense
+    })
+     
+    );
+   
+    console.log('entry array',entriesArray);
     
-    console.log('data is',data);
+    const userExpenses = entriesArray.filter(
+      (expense) => expense.email === myEmail
+    );
+  console.log(myEmail)
+
+    setExpenses(userExpenses)
+    
   }catch(err){
     console.log(err)
   }
   }   
   const deleteBtnHandler = async (expense) => {
     try {
-      console.log("Deleting expense with ID:", expense.id);
-
       await axios.delete(
-        `https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses/${expense.id}.json`
+        `https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses/${expense.key}.json`
       );
 
       console.log("Successfully deleted expense");
@@ -65,9 +104,19 @@ const Expense =() =>{
       console.log("Error deleting an item", error);
     }
   };
+
+  const editHandler =  (key, description, price, category)=>{
+    setEditingItemId(key)
+    amountRef.current.value = price
+   descRef.current.value = description
+    categoryRef.current.value= category
+  }
  const updateHandler = () =>{
     navigate('/profileform')
  }
+ useEffect(() => {
+  fetchData();
+}, []);
  return(<>
 <h2 className={classes.h2}> Welcome to Expense Tracker</h2>
 <p>Your profile is incomplete 
@@ -86,7 +135,7 @@ const Expense =() =>{
           <input type="text" className="form-control"    id="desc"  required ref={descRef}/>
         </div>
         <div className="mb-3">
-          <label htmlFor="email" className="form-label">Category</label>
+          <label htmlFor="category" className="form-label">Category</label>
           <select className="form-select" id="category"  required ref={categoryRef}>
             <option value="" >Select Category</option>
             <option value="food">Food</option>
@@ -98,19 +147,11 @@ const Expense =() =>{
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
     </div>
+
     </div>
-    
+    {list}
     <div >
-      {expenses.map((expense) => (
-        <li key={expense.id} >
-          
-          <span>{expense.amount}  </span>
-          <span>{expense.desc}  </span>
-          <span>{expense.category}  </span>
-          <span> <button onClick={deleteBtnHandler(expense)}> Delete</button></span>
-          <span> <button> Edit</button></span>
-        </li>
-      ))}
+     
     </div>
 </>)   
 }
