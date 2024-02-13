@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {useDispatch}  from 'react-redux'
 import classes from "./Auth.module.css";
 import { authActions } from "../../store/AuthSlice";
@@ -85,7 +85,6 @@ const AuthPage = () => {
           }
         
         dispatch(authActions.login({idToken: data.idToken, email: data.email}))
-        console.log(data.email);
           navigate("/exp");
 
        setIsLoading(false);

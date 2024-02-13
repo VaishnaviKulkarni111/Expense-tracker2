@@ -1,12 +1,15 @@
 import { useNavigate } from "react-router-dom"
 import classes from './expense.module.css'
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
+import { themeActions } from "../../store/themeSlice";
 const Expense =() =>{
  const navigate = useNavigate();
  const [expenses, setExpenses] = useState([]);
  const [editingItemId, setEditingItemId] = useState(null);
+ const [isPremiumActivated, setIsPremium] = useState(false);
+ const [totalExpenses, setTotalExpenses] = useState(0);
  const url ='https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses.json'
  
  const list = expenses.map((expense) => (
@@ -17,18 +20,38 @@ const Expense =() =>{
     <span>{expense.category}  </span>
     <span> <button onClick={() => deleteBtnHandler(expense)}> Delete</button></span>
     <span> <button onClick={() =>editHandler(expense.key,
-                    expense.description,
-                    expense.price,
-                    expense.category)}> Edit</button></span>
+    expense.description,
+    expense.price,
+    expense.category)}> Edit</button></span>
   </li>
 ))
  const dispatch = useDispatch();
  const isAuthenticated = useSelector(state=>state.auth.isAuthenticated)
-
 const myEmail = useSelector((state) => state.auth.email);
+const isDarkTheme = useSelector((state) => state.theme.isDark)
+
  const amountRef = useRef();
  const descRef = useRef();
  const categoryRef = useRef();
+
+ const toggleThemeHandler = () => {
+  dispatch(themeActions.toggleTheme());
+};
+
+const downloadCSVHandler = () =>{
+  const csvData = expenses.map((expense) => {
+    return `${expense.description},${expense.price},${expense.category}`;
+  });
+  const csvContent = `Description,Price,Category\n${csvData.join("\n")}`;
+  const blob = new Blob([csvContent], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "expenses.csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
   const submitHandler = async (e) => {  
     e.preventDefault();
@@ -39,9 +62,8 @@ const myEmail = useSelector((state) => state.auth.email);
       price: enteredPrice,
       description: enteredDesc,
       category: enteredCategory,
-    
+      email: myEmail,
     }
-    console.log('obj', obj)
    try{
     if(editingItemId){
       await axios.put( `https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses/${editingItemId}.json`,
@@ -69,28 +91,30 @@ const myEmail = useSelector((state) => state.auth.email);
   const fetchData = async () =>{
   try{
     const response = await axios.get(url)
-    
-
     const data = response.data;
     console.log('data',data);
     const entriesArray = Object.entries(data).map(([key, expense]) => ({
       key, ...expense
-    })
-     
-    );
-   
-    console.log('entry array',entriesArray);
+    }) );
     
     const userExpenses = entriesArray.filter(
       (expense) => expense.email === myEmail
     );
-  console.log(myEmail)
+  console.log(userExpenses, 'userexp')
 
-    setExpenses(userExpenses)
-    
+   if(myEmail){
+    setExpenses( userExpenses)
+   } 
+    let totalExpenses = 0;
+    for (const expense of userExpenses) {
+      totalExpenses += parseFloat(expense.price);
+    }
+    setTotalExpenses(totalExpenses);
   }catch(err){
     console.log(err)
   }
+
+  
   }   
   const deleteBtnHandler = async (expense) => {
     try {
@@ -111,17 +135,39 @@ const myEmail = useSelector((state) => state.auth.email);
    descRef.current.value = description
     categoryRef.current.value= category
   }
- const updateHandler = () =>{
-    navigate('/profileform')
- }
+ 
  useEffect(() => {
   fetchData();
 }, []);
  return(<>
 <h2 className={classes.h2}> Welcome to Expense Tracker</h2>
-<p>Your profile is incomplete 
-<button onClick={updateHandler}> Complete now</button>
-</p>
+<span className="Total">Total Expense: {totalExpenses}</span>
+
+{totalExpenses > 10000 && isAuthenticated && (
+        <div className="premium-button">
+          {!isPremiumActivated && (
+            <button
+              className="premium-button1"
+              onClick={() =>{setIsPremium(true)}}
+            >
+              Activate Premium
+            </button>
+          )}
+        </div>)}
+        {isPremiumActivated && (
+            <div className="PremiumProp">
+              <button className="propButton" onClick={toggleThemeHandler}>
+                {isDarkTheme ? "Light" : "Dark"} Theme
+              </button>
+              <button className="propButton" onClick={downloadCSVHandler}>
+                Download CSV
+              </button>
+              <button className="propButton" onClick={() =>{setIsPremium(false)}}>
+                Cancel
+              </button>
+            </div>
+          )}    
+
 <div className="container mt-5">
 <div className="col-md-5">
   <h2 >Add your expenses here</h2>
@@ -146,13 +192,18 @@ const myEmail = useSelector((state) => state.auth.email);
         </div>
         <button type="submit" className="btn btn-primary">Submit</button>
       </form>
+      
     </div>
 
     </div>
     {list}
-    <div >
-     
-    </div>
+
+   
+
+    
+    
+
+              
 </>)   
 }
 
