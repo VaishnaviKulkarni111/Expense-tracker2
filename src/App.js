@@ -6,6 +6,7 @@ import AboutPage from "./pages/AboutPage";
 import Expense from "./components/expense/Expense";
 import AuthPage from "./components/Authentication/Auth";
 import Profile from "./components/profile/Profile";
+
 function App() {
   return (
     <>
@@ -17,6 +18,7 @@ function App() {
       <Route path="/about" element={<AboutPage />} />
       <Route path="/profile" element={<Profile />} />
       <Route path="/" element={<AuthPage />} />
+      
      
       </Routes>
     </>

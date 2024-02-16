@@ -3,6 +3,7 @@ import {useDispatch}  from 'react-redux'
 import classes from "./Auth.module.css";
 import { authActions } from "../../store/AuthSlice";
 import { useNavigate } from "react-router-dom";
+import { Button } from "react-bootstrap";
 
 const AuthPage = () => {
   const emailRef = useRef();
@@ -98,41 +99,48 @@ const AuthPage = () => {
 
   return (
     <>
+      
       <section className={classes.auth}>
-        <h1>{isLogin ? "Sign Up" : "Login"}</h1>
+        <h1 className="mb-4">{isLogin ? "Sign Up" : "Login"}</h1>
+        
         <form onSubmit={submitHandler}>
-          <div className={classes.control}>
-            <label htmlFor="email">Your Email</label>
-            <input type="email" id="email" required ref={emailRef} />
-          </div>
-          <div className={classes.control}>
-            <label htmlFor="password">Your Password</label>
-            <input type="password" id="password" required ref={passwordRef} />
-          </div>
-
+        <div className={classes.form_group}>
+          <input type="email" className={classes.form_control} id="email" placeholder=" " ref={emailRef} />
+          <label htmlFor="email">Email address</label>
+        </div>
+       
+        <div className={classes.form_group}>
+          <input type="password" className={classes.form_control} id="password" placeholder=" " ref={passwordRef}/>
+          <label htmlFor="password">Password</label>
+        </div>
+        
+        {!isLogin && (
+            <Button variant="link" 
+              onClick={forgotPasswordHandler} >
+              Forgot Password?
+            </Button>
+          )}
           <div className={classes.actions}>
             {!isLoading && (
-              <button>{isLogin ? "Create Account" : "Login"}</button>
+              <button type="submit" className="btn btn-primary btn-block">
+                {isLogin ? "Sign up" : "Login"}</button>
             )}
             {isLoading && <p>Sending Request...</p>}
           </div>
-          {!isLogin && (
-            <button
-              className={classes.forgotBtn}
-              onClick={forgotPasswordHandler}
-            >
-              Forgot Password
-            </button>
-          )}
-          <div>
-            <button
+         
+          <div className={classes.signup_link}>
+            <div
               type="button"
               className={classes.toggle}
               onClick={switchAuthModeHandler}
             >
-              {!isLogin ? "Create new account" : "Have an Account? Login!"}
-            </button>
+              {!isLogin ? "Don't have an account? " : "Already have an Account?"}
+              <span style={{ cursor: 'pointer', color: '#007bff' }}>
+              {!isLogin ? 'Sign up!' : 'Login'}
+            </span>
+            </div>
           </div>
+         
         </form>
       </section>
     </>

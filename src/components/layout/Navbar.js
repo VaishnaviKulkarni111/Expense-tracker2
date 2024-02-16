@@ -2,13 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import classes from "./navbar.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "../../store/AuthSlice";
+
 const Navbar = () => {
   const isLoggedIn = useSelector((state) => state.auth.isAuthenticated);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const logouHandler = () => {
     dispatch(authActions.logout());
-    navigate("/");
+    navigate("/login");
   };
   return (
     <>
@@ -23,21 +24,18 @@ const Navbar = () => {
                 <Link to="/exp">Expense</Link>
               </li>
             )}
-            <li>
-              <Link to="/about">About</Link>
-            </li>
             {isLoggedIn && (
-              <li>
+              ( isLoggedIn && <li>
                 <Link to="/profile">Profile</Link>
-              </li>
+              </li>)
             )}
             {isLoggedIn && (
               <li>
-                <button onClick={logouHandler}>Logout</button>
+                <button className={classes.loginbtn} onClick={logouHandler}>Logout</button>
               </li>
             )}
             {!isLoggedIn && (
-              <button className="logout-btn" onClick={() => navigate("/")}>
+              <button className={classes.loginbtn} onClick={() => navigate("/")}>
                 Login
               </button>
             )}

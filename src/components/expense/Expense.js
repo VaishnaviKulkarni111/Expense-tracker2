@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom"
-import classes from './expense.module.css'
+import './expense.css';
 import { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,16 +13,16 @@ const Expense =() =>{
  const url ='https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses.json'
  
  const list = expenses.map((expense) => (
-  <li key={expense.key} >
-    
-    <span>{expense.price}  </span>
-    <span>{expense.description}  </span>
-    <span>{expense.category}  </span>
-    <span> <button onClick={() => deleteBtnHandler(expense)}> Delete</button></span>
-    <span> <button onClick={() =>editHandler(expense.key,
+  <li key={expense.key} className="expense-item" >
+  
+    <span  className="expense-desc">{expense.description}  </span>
+    <span className="expense-price">{expense.price}  </span>
+    <span  className="expense-category">{expense.category}  </span>
+     <button onClick={() => deleteBtnHandler(expense)} className="deleteBTN">Delete</button>
+     <button className="editBTN" onClick={() =>editHandler(expense.key,
     expense.description,
     expense.price,
-    expense.category)}> Edit</button></span>
+    expense.category)}> Edit</button>
   </li>
 ))
  const dispatch = useDispatch();
@@ -66,7 +66,7 @@ const downloadCSVHandler = () =>{
     }
    try{
     if(editingItemId){
-      await axios.put( `https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses/${editingItemId}.json`,
+      await axios.patch( `https://expense-tracker-70907-default-rtdb.firebaseio.com/expenses/${editingItemId}.json`,
       {
         price: enteredPrice,
         description: enteredDesc,
@@ -86,6 +86,9 @@ const downloadCSVHandler = () =>{
     console.log(err, 'error adding expense')
    } 
    fetchData()
+   amountRef.current.value = ''
+   descRef.current.value = ''
+    categoryRef.current.value =''
      };
 
   const fetchData = async () =>{
@@ -140,8 +143,9 @@ const downloadCSVHandler = () =>{
   fetchData();
 }, []);
  return(<>
-<h2 className={classes.h2}> Welcome to Expense Tracker</h2>
-<span className="Total">Total Expense: {totalExpenses}</span>
+ <div className={isDarkTheme? "dark-theme" : ""}>
+
+<section className="Total">Total Expense: {totalExpenses}
 
 {totalExpenses > 10000 && isAuthenticated && (
         <div className="premium-button">
@@ -150,14 +154,15 @@ const downloadCSVHandler = () =>{
               className="premium-button1"
               onClick={() =>{setIsPremium(true)}}
             >
-              Activate Premium
+              Upgrade to Premium*
             </button>
           )}
         </div>)}
+        
         {isPremiumActivated && (
             <div className="PremiumProp">
               <button className="propButton" onClick={toggleThemeHandler}>
-                {isDarkTheme ? "Light" : "Dark"} Theme
+                {isDarkTheme ? "Light" : "Dark"} Mode
               </button>
               <button className="propButton" onClick={downloadCSVHandler}>
                 Download CSV
@@ -167,9 +172,12 @@ const downloadCSVHandler = () =>{
               </button>
             </div>
           )}    
+</section>
 
-<div className="container mt-5">
-<div className="col-md-5">
+
+
+<div className="formbody">
+<div className="col-md-5 ">
   <h2 >Add your expenses here</h2>
    <form onSubmit={submitHandler}>
    <div className="mb-3">
@@ -196,14 +204,17 @@ const downloadCSVHandler = () =>{
     </div>
 
     </div>
-    {list}
+    <div className="exp-list">
+      <ul className="expenses"> {list}</ul>
+    </div>
+   
 
    
 
     
     
 
-              
+    </div>           
 </>)   
 }
 

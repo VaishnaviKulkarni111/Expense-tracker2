@@ -1,23 +1,17 @@
-
+import './profile.css';
 import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-
+import { Button } from 'react-bootstrap';
 const Profile =() =>{
     const [name, setName] = useState('');
     const [photo, setPhoto] = useState('');
     const [email, setEmail] = useState('');
-
-    console.log(name)
-    console.log(email)
+    
     const nameRef = useRef();
     const photoRef = useRef();
     
-    const myEmail = useSelector((state) => state.auth.email);
     const idToken = useSelector(state => state.auth.idToken)
-    console.log(idToken)
-    useEffect(() =>{
-        saveData();
-    },[idToken])
+    
     
     const submitHandler=async (e) =>{
     e.preventDefault();
@@ -50,29 +44,41 @@ const Profile =() =>{
 
     }
 
-    const saveData = async() =>{
-    const url= 'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyD4V11PNolpKhtXgURPq9zel2py2kUt5Sw'    
-    try{
-    const res= await fetch(url,{
-     method: "POST",   
-     idToken: idToken
-     }) 
-     if (!res.ok) {
-        const data = await res.json();
-        throw new Error(data.error?.message || "Failed to fetch user data");
-      }
-
-      const data = await res.json();
-      const userData = data.users[0];
-
-      setName(userData.displayName );
-      setPhoto(userData.photoUrl );
-      setEmail(userData.email );    
-
-    }catch(err){
-     console.log(err)
-    }
-    }
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const response = await fetch(
+              `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyD4V11PNolpKhtXgURPq9zel2py2kUt5Sw`,
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  idToken,
+                }),
+                headers: {
+                  "Content-type": "application/json",
+                  
+                },
+              }
+            );
+    
+            if (!response.ok) {
+              const data = await response.json();
+              throw new Error(data.error?.message || "Failed to fetch user data");
+            }
+    
+            const data = await response.json();
+            const userData = data.users[0];
+    
+            setName(userData.displayName || "");
+            setPhoto(userData.photoUrl || "");
+            setEmail(userData.email || "");
+          } catch (err) {
+            alert(err.message);
+          } 
+        };
+    
+        fetchUserData();
+      }, [idToken]);
 
    const verifyEmail =async()=>{
     const url= 'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyD4V11PNolpKhtXgURPq9zel2py2kUt5Sw';
@@ -99,24 +105,34 @@ const Profile =() =>{
 
     return(<>
     <h2>Contact Details</h2>
-    <form onSubmit={submitHandler}>
-     <label htmlFor="name">Full Name</label>
-     <input type="text"  ref={nameRef} />
+    <form onSubmit={submitHandler} className='form'>
+    <div className='label'>
+    <label htmlFor="name" >Full Name</label>
+     <input type="text"  ref={nameRef} /> 
+        
+    </div>
+     <div className='label'>
      <label htmlFor="name">Profile Photo URL</label>
      <input type="text" ref={photoRef}/>
-     <button type="submit">Update</button>
+     </div>
+     
+     <button type="submit" className='updateBtn'>Update</button>
     </form>
+
     <section className="details">
         <ul>
-          <li className="detailList">{name}</li>
+          <li className="name">{name}</li>
           <li className="profImg">
             <img src={photo} alt="profile" />
           </li>
-          <li>{myEmail}</li>
+          <li>{email}
+          </li>
+          <Button onClick={verifyEmail} variant='link'> Verify email</Button>
         </ul>
-    </section>    
-    <button onClick={verifyEmail}> Verify email</button>
+        
 
+    </section>    
+   
     </> )
 }
 

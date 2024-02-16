@@ -1,6 +1,6 @@
 .header {
     height: 5rem;
-    background-color: #000000;
+    background-color: navy;
     padding: 0 10%;
 
   }
@@ -37,41 +37,11 @@
   border-bottom: 4px solid #95bcf0;
 }
 
-.brand {
-  background: gray;
-  padding: 30px;
-    font-size: 100px;
-    color: white;
-    text-align: center;
-    margin-top: 0;
-    margin-bottom: 0;
-    font-family: 'Times New Roman', Times, serif;
-}
 
-.cart{
-  background: black;
-  border: 2px solid #56CCF2;
-    border-radius: 7px;
-    padding: 3px 5px;
-    position: absolute;
-    right: 3%;
-    text-align: center;
-   
-}
 
-.btn{
-  background: black;
-  color: white;
+.loginbtn{
+  font-size: 1.5rem;
   border: none;
- 
-}
-.badge {
-  background-color: #296fcc;
-  padding: 0.25rem 0.7rem;
-  border-radius: 50px;
-  margin-left: 1rem;
-  font-weight: bold;
-  position: absolute;
-  bottom: 50%;
-  right: -20%;
+  border-radius: 10px;
+  width: 6rem;
 }
