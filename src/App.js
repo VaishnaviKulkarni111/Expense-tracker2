@@ -1,8 +1,7 @@
-import { Route, Routes} from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/layout/Navbar";
 import HomePage from "./pages/Home";
-import AboutPage from "./pages/AboutPage";
 import Expense from "./components/expense/Expense";
 import AuthPage from "./components/Authentication/Auth";
 import Profile from "./components/profile/Profile";
@@ -12,14 +11,10 @@ function App() {
     <>
       <Navbar />
       <Routes>
-      
-      <Route path="/home" element={<HomePage />} />
-      <Route path="/exp" element={<Expense />} />
-      <Route path="/about" element={<AboutPage />} />
-      <Route path="/profile" element={<Profile />} />
-      <Route path="/" element={<AuthPage />} />
-      
-     
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/exp" element={<Expense />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/" element={<AuthPage />} />
       </Routes>
     </>
   );

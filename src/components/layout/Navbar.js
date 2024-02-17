@@ -9,7 +9,7 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const logouHandler = () => {
     dispatch(authActions.logout());
-    navigate("/login");
+    navigate("/");
   };
   return (
     <>
@@ -24,18 +24,23 @@ const Navbar = () => {
                 <Link to="/exp">Expense</Link>
               </li>
             )}
-            {isLoggedIn && (
-              ( isLoggedIn && <li>
+            {isLoggedIn && isLoggedIn && (
+              <li>
                 <Link to="/profile">Profile</Link>
-              </li>)
+              </li>
             )}
             {isLoggedIn && (
               <li>
-                <button className={classes.loginbtn} onClick={logouHandler}>Logout</button>
+                <button className={classes.loginbtn} onClick={logouHandler}>
+                  Logout
+                </button>
               </li>
             )}
             {!isLoggedIn && (
-              <button className={classes.loginbtn} onClick={() => navigate("/")}>
+              <button
+                className={classes.loginbtn}
+                onClick={() => navigate("/")}
+              >
                 Login
               </button>
             )}
