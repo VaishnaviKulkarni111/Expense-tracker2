@@ -151,7 +151,7 @@ const Expense = () => {
 
   useEffect(() => {
     fetchData();
-  }, [url, myEmail, setExpenses, setTotalExpenses]);
+  }, [url, myEmail, setExpenses, setTotalExpenses, fetchData]);
 
   return (
     <>
