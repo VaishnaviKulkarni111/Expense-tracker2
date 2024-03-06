@@ -151,7 +151,7 @@ const Expense = () => {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [fetchData]);
 
   return (
     <>
